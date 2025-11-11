@@ -1,5 +1,6 @@
 from config import CHARACTER_LIMIT
 import os
+from google.genai import types
 
 def get_file_content(working_directory, file_path):
     abs_working = os.path.abspath(working_directory)
