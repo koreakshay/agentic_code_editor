@@ -1,7 +1,7 @@
 from google.genai import types
 
 # schema for get_file_content
-schema_get_files_content = types.FunctionDeclaration(
+schema_get_file_content = types.FunctionDeclaration(
     name="get_file_content",
     description="Reads and returns the contents of a specified file within the working directory, truncated if over the character limit.",
     parameters=types.Schema(

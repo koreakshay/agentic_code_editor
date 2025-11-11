@@ -3,7 +3,11 @@ import sys
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-from functions.function_schemas import schema_get_files_info, schema_get_files_content, schema_write_file, schema_run_python_file
+from functions.function_schemas import schema_get_files_info, schema_get_file_content, schema_write_file, schema_run_python_file
+from functions.get_files_info import get_files_info
+from functions.get_file_content import get_file_content
+from functions.write_file import write_file
+from functions.run_python_file import run_python_file
 
 
 load_dotenv()
@@ -37,7 +41,7 @@ All paths you provide should be relative to the working directory. You do not ne
 available_functions = types.Tool(
     function_declarations=[
         schema_get_files_info,
-        schema_get_files_content,
+        schema_get_file_content,
         schema_write_file,
         schema_run_python_file
     ]
@@ -51,17 +55,45 @@ response = client.models.generate_content(
                                        tools=[available_functions]),
 )
 
-# Create response
+function_map = {
+    "get_files_info": get_files_info,
+    "get_file_content": get_file_content,
+    "write_file": write_file,
+    "run_python_file": run_python_file,
+}
+
+def call_function(function_call_part, verbose=False):
+    func_name = function_call_part.name
+    args = function_call_part.args or {}
+    args["working_directory"] = "./calculator"
+    if func_name not in function_map:
+        error_msg = f"Function '{func_name}' is not supported."
+        return types.Content(role="tool", parts=[types.Part(text=error_msg)])
+    func = function_map[func_name]
+    function_result = func(**args)
+    return types.Content(
+    role="tool",
+    parts=[
+        types.Part.from_function_response(
+            name=func_name,
+            response={"result": function_result},
+        )
+    ],
+)
+
 if len(sys.argv) == 3 and sys.argv[2] == '--verbose':
     print(f"User prompt: {user_prompt}")
     print(f'Prompt tokens: {response.usage_metadata.prompt_token_count}')
     print(f'Response tokens: {response.usage_metadata.candidates_token_count}')
 
-
-# function declaration
 if hasattr(response, 'function_calls') and response.function_calls:
     for function_call_part in response.function_calls:
-        print(f"Calling function: {function_call_part.name}({function_call_part.args})")
+        function_call_result = call_function(function_call_part, verbose=True)
+        try:
+            result = function_call_result.parts[0].function_response.response.get("result")
+        except (AttributeError, KeyError):
+            raise Exception("Function response is missing or malformed.")
+        if len(sys.argv) == 3 and sys.argv[2] == '--verbose':
+            print(result)
 else:
     print(response.text)
-
