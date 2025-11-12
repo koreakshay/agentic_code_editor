@@ -1,7 +1,21 @@
-# Agentic Code Editor
+<h1 align="center">🤖 AI Coding Agent</h1>
+<p align="center"><strong>Secure, Context-Aware Function Calling Assistant using Google Gemini</strong></p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue" alt="Python version" />
+  <img src="https://img.shields.io/badge/Google%20Gemini-API-green" alt="Gemini API" />
+  <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License: MIT" />
+  <img src="https://img.shields.io/badge/Built%20with-%E2%9D%A4%EF%B8%8F%20in%20Python-red" alt="Built with love" />
+</p>
+
+---
 
 ## Project Overview
 Built a toy version of Claude Code or Cursor's Agentic Mode using Google's free Gemini API
+The project demonstrates:
+- Integration of **LLM reasoning** with **secure local function execution**
+- Use of **structured function schemas** (`types.FunctionDeclaration`) and **tool orchestration**
+- Contextual multi-turn conversation handling for step-by-step reasoning
 
 ## Features
 - Interact with Google Gemini AI models.
