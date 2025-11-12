@@ -47,20 +47,13 @@ available_functions = types.Tool(
     ]
 )
 
-# Create client
-response = client.models.generate_content(
-    model="gemini-2.0-flash-001",
-    contents=messages,
-    config=types.GenerateContentConfig(system_instruction=system_prompt,
-                                       tools=[available_functions]),
-)
-
 function_map = {
     "get_files_info": get_files_info,
     "get_file_content": get_file_content,
     "write_file": write_file,
     "run_python_file": run_python_file,
 }
+
 
 def call_function(function_call_part, verbose=False):
     func_name = function_call_part.name
@@ -81,19 +74,37 @@ def call_function(function_call_part, verbose=False):
     ],
 )
 
-if len(sys.argv) == 3 and sys.argv[2] == '--verbose':
-    print(f"User prompt: {user_prompt}")
-    print(f'Prompt tokens: {response.usage_metadata.prompt_token_count}')
-    print(f'Response tokens: {response.usage_metadata.candidates_token_count}')
+response = None
+# create client and generate content with full messages list up to 20 times max
+for _ in range(20):
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.0-flash-001",
+            contents=messages,
+            config=types.GenerateContentConfig(system_instruction=system_prompt,
+                                               tools=[available_functions]),
+        )
 
-if hasattr(response, 'function_calls') and response.function_calls:
-    for function_call_part in response.function_calls:
-        function_call_result = call_function(function_call_part, verbose=True)
-        try:
-            result = function_call_result.parts[0].function_response.response.get("result")
-        except (AttributeError, KeyError):
-            raise Exception("Function response is missing or malformed.")
-        if len(sys.argv) == 3 and sys.argv[2] == '--verbose':
-            print(result)
-else:
-    print(response.text)
+        if hasattr(response, 'function_calls') and response.function_calls:
+            for function_call_part in response.function_calls:
+                print(f" - Calling function: {function_call_part.name}")
+                function_call_result = call_function(function_call_part, verbose=True)
+                messages.append(types.Content(role="user", parts=function_call_result.parts))
+            continue
+
+        if hasattr(response, "text") and response.text:
+            print("Final response:")
+            print(response.text)
+            break        
+
+    except Exception as e:
+        print(f"Error during generate_content: {e}")
+        break
+
+
+
+
+# if len(sys.argv) == 3 and sys.argv[2] == '--verbose':
+#     print(f"User prompt: {user_prompt}")
+#     print(f'Prompt tokens: {response.usage_metadata.prompt_token_count}')
+#     print(f'Response tokens: {response.usage_metadata.candidates_token_count}')
