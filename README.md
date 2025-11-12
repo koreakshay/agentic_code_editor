@@ -1,11 +1,11 @@
 # Agentic Code Editor
 
 ## Project Overview
-Built a toy version of Claude Code or Cursor using Google's free Gemini API
+Built a toy version of Claude Code or Cursor's Agentic Mode using Google's free Gemini API
 
 ## Features
-- Interact with Google Gemini AI models seamlessly.
-- Execute commands and manage files via AI-driven instructions.
+- Interact with Google Gemini AI models.
+- Execute commands and manage files in natural language.
 - Secure sandboxed working directory to prevent unauthorized access.
 - Verbose output for detailed debugging and tracking.
 - Simple setup and usage with Python and uv runtime.
@@ -19,8 +19,8 @@ Built a toy version of Claude Code or Cursor using Google's free Gemini API
 ### Steps
 1. Clone the repository:
    ```
-   git clone https://github.com/koreakshay/aiAgent.git
-   cd aiAgent
+   git clone https://github.com/koreakshay/agentic_code_editor.git
+   cd agentic_code_editor
    ```
 2. Install dependencies:
    ```
@@ -71,18 +71,4 @@ The AI Agent operates within a sandboxed working directory to ensure that all fi
 
 - Integration with additional AI models and APIs.
 - Enhanced natural language understanding for more complex commands.
-- GUI interface for easier interaction.
-- Advanced logging and monitoring features.
-- Support for multi-user environments.
-
-## Contribution Guidelines
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository.
-2. Create a new feature branch (`git checkout -b feature-name`).
-3. Commit your changes (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature-name`).
-5. Open a pull request.
-
-Please ensure your code follows the existing style and includes appropriate tests.
+- Giving it more functions to call
